@@ -3,6 +3,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Note from './Note';
 import CreateArea from './CreateArea';
+import axios from 'axios';
 
 function App() {
   const [todo, setTodo] = useState({
@@ -11,18 +12,40 @@ function App() {
   });
   const [todoItems, setTodoItems] = useState([]);
 
+  // Handle getting todoItems from the API
   useEffect(() => {
-    // console.log({ title: todo.title, content: todo.content });
-    console.log(todoItems);
-    setTodo({ title: '', content: '' });
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          'https://keeper-app-e3tn.onrender.com/todo'
+        );
+        setTodoItems(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error.stack());
+      }
+    };
+
+    fetchData();
   }, [todoItems]);
 
   function handleSubmit(e) {
     e.preventDefault();
-    setTodoItems((previousArr) => [
-      ...previousArr,
-      { title: todo.title, content: todo.content },
-    ]);
+    const data = { title: todo.title, content: todo.content };
+    const todoData = async () => {
+      try {
+        const response = await axios.post(
+          'https://keeper-app-e3tn.onrender.com/todo',
+          data
+        );
+        console.log('Post request successful:', response.data);
+      } catch (error) {
+        console.error('Error making post request:', error);
+      }
+    };
+
+    todoData();
+
+    setTodo({ title: '', content: '' });
   }
 
   function handleChange(e) {
@@ -39,9 +62,12 @@ function App() {
     }
   }
 
-  function deleteTodo(id) {
-    const newTodoList = todoItems.filter((todo, index) => index !== id);
-    setTodoItems(newTodoList);
+  async function deleteTodo(id) {
+    try {
+      await axios.delete(`https://keeper-app-e3tn.onrender.com/todo/${id}`);
+    } catch (error) {
+      console.error('Error making delete request:', error);
+    }
   }
 
   return (
@@ -52,11 +78,11 @@ function App() {
         handleChange={handleChange}
         todo={todo}
       />
-      {todoItems.map((todo, index) => {
+      {todoItems.map((todo) => {
         return (
           <Note
-            key={index}
-            id={index}
+            key={todo.id}
+            id={todo.id}
             title={todo.title}
             content={todo.content}
             deleteTodo={deleteTodo}
