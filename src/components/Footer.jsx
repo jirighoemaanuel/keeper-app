@@ -1,10 +1,8 @@
 function Footer() {
-  const date = new Date();
-  const currentYear = date.getFullYear();
-
+  const year = new Date().getFullYear();
   return (
     <footer>
-      <p>CopyRight ©️ {currentYear}</p>
+      <p>Copyright ⓒ {year}</p>
     </footer>
   );
 }
