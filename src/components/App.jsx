@@ -49,17 +49,13 @@ function App() {
   }
 
   function handleChange(e) {
-    const name = e.target.name;
-    const value = e.target.value;
-    if (name === 'title') {
-      setTodo((previousTodo) => {
-        return { ...previousTodo, title: value };
-      });
-    } else if (name === 'content') {
-      setTodo((previousTodo) => {
-        return { ...previousTodo, content: value };
-      });
-    }
+    const { name, value } = e.target;
+    setTodo((prevNote) => {
+      return {
+        ...prevNote,
+        [name]: value,
+      };
+    });
   }
 
   async function deleteTodo(id) {
